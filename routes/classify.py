@@ -19,7 +19,6 @@ def classify_text():
         }, 400
     
     # Classify text
-    print(text)
     return {
         'result': classifier.classify(text)
     }, 200
