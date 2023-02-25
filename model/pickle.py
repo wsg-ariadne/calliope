@@ -1,5 +1,5 @@
+from typing import Dict, List
 import pickle5 as pickle
-import random
 import nltk
 import string
 
@@ -27,29 +27,28 @@ data_good = [
 
 data = data_bad + data_good
 
-word_string = ''
-documents = []
 
-for point in data:
-    curr_tuple = (point[0].translate(str.maketrans('', '', string.punctuation)).split(), point[1])
-    documents.append(curr_tuple)
-    word_string = word_string + point[0].translate(str.maketrans('', '', string.punctuation))
+class PickledModel:
+    def __init__(self, pickle_path: str):
+        try:
+            self.model = pickle.load(open(pickle_path, 'rb'))
+        except FileNotFoundError:
+            raise FileNotFoundError("No pickle file found at {}".format(pickle_path))
 
-random.shuffle(documents)
-# print(documents[0])
+        word_string = ''
+        for point in data:
+            word_string = word_string + point[0].translate(str.maketrans('', '', string.punctuation))
 
-all_words = nltk.FreqDist(w.lower() for w in word_string.split())
+        all_words = nltk.FreqDist(w.lower() for w in word_string.split())
+        self.word_features = list(all_words)[:5]
 
-word_features = list(all_words)[:5]
-
-def document_features(document):
-    document_words = set(document)
-    features = {}
-    for word in word_features:
-        features['contains({})'.format(word)] = (word in document_words)
-    return features
-
-# This is how it's used
-calliope = pickle.load(open('calliope.pickle', 'rb'))
-test_banner = data[random.randint(0,5)][0]
-print("'"+ test_banner + "' is " + calliope.classify(document_features(test_banner.split())))
+    def get_features(self, text: List[str]) -> Dict[str, bool]:
+        words = set(text)
+        features = {}
+        for word in self.word_features:
+            features['contains({})'.format(word)] = (word in words)
+        return features
+    
+    def classify(self, text: str) -> bool:
+        features = self.get_features(text.split())
+        return self.model.classify(features) == 'good'
