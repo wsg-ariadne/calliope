@@ -1,0 +1,9 @@
+# macOS crap
+**/.DS_Store
+
+# Python virtualenv
+**/.venv/
+**/.virtualenv/
+
+# Python bytecode
+**/*.py[cod]
