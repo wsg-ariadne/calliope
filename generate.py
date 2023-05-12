@@ -41,11 +41,11 @@ print("Classifier accuracy rate: ",(nltk.classify.accuracy(classifier, test_set)
 # classifier.show_most_informative_features(5)
 
 # Pickling works
-save_classifier = open('calliope.pickle', 'wb')
+save_classifier = open('new_calliope.pickle', 'wb')
 pickle.dump(classifier, save_classifier) 
 save_classifier.close()
 
 # This is how it's used
-calliope = pickle.load(open('calliope.pickle', 'rb'))
+calliope = pickle.load(open('new_calliope.pickle', 'rb'))
 test_banner = data[random.randint(0,20)][0]
 print("'"+ test_banner + "' is " + calliope.classify(document_features(test_banner.split())))
