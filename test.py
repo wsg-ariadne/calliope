@@ -29,23 +29,10 @@ def document_features(document):
         features['contains({})'.format(word)] = (word in document_words)
     return features
 
-# Train Naive Bayes classifier
-featuresets = [(document_features(d), c) for (d,c) in documents]
-train_set, test_set = featuresets[80:], featuresets[:80]
-classifier = nltk.NaiveBayesClassifier.train(train_set)
+# Load pickled model:
+calliope = pickle.load(open('calliope.pickle', 'rb'))
 
-# Test the classifier
-print("Classifier accuracy rate: ",(nltk.classify.accuracy(classifier, test_set))*100)
+# Ask for text input to classify:
+test_banner = input("Input browser banner text: ")
 
-# Show the most important features as interpreted by Naive Bayes
-# classifier.show_most_informative_features(5)
-
-# Pickling works
-save_classifier = open('new_calliope.pickle', 'wb')
-pickle.dump(classifier, save_classifier) 
-save_classifier.close()
-
-# This is how it's used
-calliope = pickle.load(open('new_calliope.pickle', 'rb'))
-test_banner = data[random.randint(0,20)][0]
 print("'"+ test_banner + "' is " + calliope.classify(document_features(test_banner.split())))
